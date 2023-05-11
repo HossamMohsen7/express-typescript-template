@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/node16/tsconfig.json",
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
     "experimentalDecorators": true,
     "outDir": "dist",
@@ -7,8 +7,12 @@
     "sourceMap": true,
     "moduleResolution": "Node16",
     "module": "Node16",
-    "target": "ES2022"
   },
-"include": ["src/**/*.ts"],
-  "exclude": ["node_modules", ".vscode"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".vscode"
+  ]
 }

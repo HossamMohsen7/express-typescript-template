@@ -9,6 +9,7 @@ import morgan from "morgan";
 
 import { helloRouter } from "./routes/helloRoute.js";
 
+const PORT = process.env.PORT || 3000;
 const app = express();
 const http = createServer(app);
 
@@ -19,8 +20,6 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
-
-const PORT = process.env.PORT || 3000;
 
 app.set("trust proxy", "loopback");
 app.use(
