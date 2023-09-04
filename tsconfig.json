@@ -4,15 +4,24 @@
     "experimentalDecorators": true,
     "outDir": "dist",
     "allowJs": true,
-    "sourceMap": true,
     "moduleResolution": "Node16",
     "module": "Node16",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "sourceRoot": "/"
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
   ],
   "exclude": [
     "node_modules",
     ".vscode"
-  ]
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "files": true
+  }
 }

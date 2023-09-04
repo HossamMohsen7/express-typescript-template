@@ -1,6 +1,6 @@
 {
   "name": "express-typescript-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Template for NodeJS Backend using Typescript and ExpressJS",
   "main": "dist/app.js",
   "repository": "https://github.com/HossamMohsen7/express-typescript-template",
@@ -12,32 +12,47 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "tsc && node dist/app.js",
-    "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/app.ts",
+    "test": "tsc && node dist/test.js",
+    "build": "prisma generate && tsc",
+    "db": "prisma db push",
+    "studio": "prisma studio"
   },
   "devDependencies": {
-    "@tsconfig/node18": "^2.0.0",
-    "@types/cors": "^2.8.13",
+    "@tsconfig/node18": "^18.2.1",
+    "@types/cors": "^2.8.14",
     "@types/express": "^4.17.17",
     "@types/hpp": "^0.2.2",
     "@types/jsonwebtoken": "^9.0.2",
-    "@types/morgan": "^1.9.4",
-    "@types/uuid": "^9.0.1",
-    "typescript": "^5.0.4"
+    "@types/morgan": "^1.9.5",
+    "@types/uuid": "^9.0.3",
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.0.1",
+    "prisma": "^5.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@prisma/client": "^5.2.0",
     "class-transformer": "^0.5.1",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "got": "^12.6.0",
+    "dotenv": "^16.3.1",
+    "express": "5.0.0-beta.1",
+    "got": "^13.0.0",
     "helmet": "^7.0.0",
     "hpp": "^0.2.3",
-    "jsonwebtoken": "^9.0.0",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "nanoid": "^4.0.2",
     "reflect-metadata": "^0.1.13",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zod": "^3.22.2",
+    "zod-express-validator": "^0.0.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "qs@>=6.9.0 <6.9.7": ">=6.9.7"
+    }
   }
 }
