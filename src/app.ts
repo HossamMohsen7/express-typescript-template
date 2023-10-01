@@ -80,6 +80,7 @@ const setupErrorHandlers = () => {
       return res.status(error.statusCode).json({
         errorCode: error.errorCode,
         error: error.message,
+        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
       });
     }
   );
