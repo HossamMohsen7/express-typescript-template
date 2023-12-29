@@ -11,9 +11,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "start": "node dist/app.js",
-    "dev": "cross-env NODE_ENV=development nodemon src/app.ts",
+    "dev": "cross-env NODE_ENV=development tsx watch src/app.ts",
     "test": "tsc && node dist/test.js",
     "build": "prisma generate && tsc",
     "db": "prisma db push",
@@ -30,7 +29,7 @@
     "cross-env": "^7.0.3",
     "nodemon": "^3.0.2",
     "prisma": "^5.7.1",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {
