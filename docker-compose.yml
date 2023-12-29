@@ -1,0 +1,21 @@
+version: "3"
+services:
+  app:
+    init: true
+    command: "pm2-runtime start dist/app.js -i max"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    ports:
+      - "$PORT:$PORT"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:${PORT}/ || exit 1
+      interval: 5m
+      timeout: 3s
+      retries: 3
