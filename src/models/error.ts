@@ -1,6 +1,7 @@
 import { ZodError } from "zod";
 import { RequestValidationError } from "zod-express-validator";
 import { errorCodes } from "../config/errors.js";
+import util from "util";
 
 class AppError extends Error {
   public readonly statusCode: number;
@@ -51,6 +52,15 @@ class AppError extends Error {
   static fromZod(err: ZodError, statusCode: number = 400) {
     const message = err.errors[0].message;
     return new AppError(statusCode, errorCodes.validation, message);
+  }
+
+  format(...args: unknown[]) {
+    return new AppError(
+      this.statusCode,
+      this.errorCode,
+      util.format(this.message, ...args),
+      this.isOperational
+    );
   }
 }
 export default AppError;
