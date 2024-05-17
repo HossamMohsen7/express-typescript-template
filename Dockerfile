@@ -2,15 +2,10 @@ FROM node:20-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-RUN apt-get update -y && apt-get install -y openssl
-RUN apt-get update && apt-get install -y wget
-RUN apt-get update && apt-get install -y bash curl && curl -1sLf \
+RUN apt-get update -y && apt-get install -y openssl wget bash curl python3 build-essential
+RUN curl -1sLf \
     'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash \
     && apt-get update && apt-get install -y infisical
-
-RUN apt-get update || : && apt-get install -y \
-    python3 \
-    build-essential
 
 RUN corepack enable
 WORKDIR /app
@@ -36,13 +31,17 @@ COPY --chown=node:node --from=build /app/prisma /app/prisma
 COPY --chown=node:node --from=build /app/node_modules /app/node_modules
 
 FROM source AS prod
+USER node
 RUN pnpm prune --prod
 RUN pnpm add -g pm2
-
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 CMD [ "pm2-runtime", "start", "dist/app.js", "-i", "max" ]
 
 FROM source AS dev
+USER node
+ENV PATH /app/node_modules/.bin:$PATH
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
+CMD ["pnpm", "dev"]
+

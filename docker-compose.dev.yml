@@ -1,0 +1,22 @@
+version: "3"
+services:
+  app:
+    init: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "$PORT:$PORT"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:${PORT}/ || exit 1
+      interval: 5m
+      timeout: 3s
+      retries: 3

@@ -7,22 +7,37 @@ SHELL=bash
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
 
+COMPOSE_DEV_FILES = -f docker-compose.yml -f docker-compose.dev.yml
+COMPOSE_PROD_FILES = -f docker-compose.yml
+
 ###################################################################################################
 ## DEV
 ###################################################################################################
-.PHONY: build build-no-cache start start-d stop shell logs
+.PHONY: build build-dev build-dev-no-cache start-prod start-prod-d start-dev start-dev-d stop shell logs
 
 build: ##@dev Build the application for dev
-	docker compose build
+	docker compose $(COMPOSE_PROD_FILES) build
 
 build-no-cache: ##@dev Build the application for dev without using cache
-	docker compose build --no-cache
+	docker compose $(COMPOSE_PROD_FILES) build --no-cache
 
-start: ##@dev Start the development environment
-	docker compose up
+build-dev: ##@dev Build the application for dev
+	docker compose $(COMPOSE_DEV_FILES) build
 
-start-d: ##@dev Start the development environment (detached)
-	docker compose up -d
+build-dev-no-cache: ##@dev Build the application for dev without using cache
+	docker compose $(COMPOSE_DEV_FILES) build --no-cache
+
+start-prod: ##@dev Start the development environment
+	docker compose $(COMPOSE_PROD_FILES) up
+
+start-prod-d: ##@dev Start the development environment (detached)
+	docker compose $(COMPOSE_PROD_FILES) up -d
+
+start-dev:
+	docker compose $(COMPOSE_DEV_FILES) up
+
+start-dev-d:
+	docker compose $(COMPOSE_DEV_FILES) up -d
 
 stop: ##@dev Stop the development environment
 	docker compose down
