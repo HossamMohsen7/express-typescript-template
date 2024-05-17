@@ -9,3 +9,6 @@ export const chunk = <T>(array: T[], size: number) =>
   );
 
 export const generateRequestId = () => randomUUID();
+
+export const getRandomArbitrary = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min) + min);

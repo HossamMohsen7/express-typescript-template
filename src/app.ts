@@ -81,6 +81,7 @@ const setupErrorHandlers = () => {
         errorCode: error.errorCode,
         error: error.message,
         stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+        data: error.data,
       });
     }
   );

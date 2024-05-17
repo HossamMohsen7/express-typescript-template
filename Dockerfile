@@ -4,6 +4,13 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 RUN apt-get update -y && apt-get install -y openssl
 RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y bash curl && curl -1sLf \
+    'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash \
+    && apt-get update && apt-get install -y infisical
+
+RUN apt-get update || : && apt-get install -y \
+    python3 \
+    build-essential
 
 RUN corepack enable
 WORKDIR /app
@@ -34,6 +41,7 @@ RUN pnpm add -g pm2
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
+CMD [ "pm2-runtime", "start", "dist/app.js", "-i", "max" ]
 
 FROM source AS dev
 ARG NODE_ENV=development
