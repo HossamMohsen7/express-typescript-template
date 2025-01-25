@@ -47,9 +47,9 @@ const setupExpressApp = async () => {
 };
 
 const setupRouters = () => {
-  app.get("/", (req, res) =>
-    res.status(200).send("Everything is working great!")
-  );
+  app.get("/", (req, res) => {
+    res.status(200).send("Everything is working great!");
+  });
 
   app.use("/api", exampleRouter);
 };
@@ -77,7 +77,8 @@ const setupErrorHandlers = () => {
       res: express.Response,
       next: express.NextFunction
     ) => {
-      return res.status(error.statusCode).json({
+      res.status(error.statusCode).json({
+        success: false,
         errorCode: error.errorCode,
         error: error.message,
         stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
