@@ -16,7 +16,7 @@
     "start": "node dist/app.js",
     "dev": "cross-env NODE_ENV=development tsx watch src/app.ts",
     "test": "tsc && node dist/test.js",
-    "build": "prisma generate && tsc && pnpm run build",
+    "build": "prisma generate && tsc && tsc-alias",
     "db": "prisma db push",
     "studio": "prisma studio"
   },
