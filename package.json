@@ -16,12 +16,12 @@
     "start": "node dist/app.js",
     "dev": "cross-env NODE_ENV=development tsx watch src/app.ts",
     "test": "tsc && node dist/test.js",
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && tsc && pnpm run build",
     "db": "prisma db push",
     "studio": "prisma studio"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.0",
+    "@tsconfig/node24": "^24.0.4",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/hpp": "^0.2.6",
@@ -29,8 +29,8 @@
     "@types/morgan": "^1.9.9",
     "@types/uuid": "^10.0.0",
     "cross-env": "^7.0.3",
-    "nodemon": "^3.1.9",
     "prisma": "^6.2.1",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   },
