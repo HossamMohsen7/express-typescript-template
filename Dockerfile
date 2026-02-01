@@ -7,10 +7,11 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash \
-    && apt-get update && apt-get install -y infisical \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+#Uncomment if you use infisical
+# RUN curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash \
+#     && apt-get update && apt-get install -y infisical \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -44,18 +45,19 @@ COPY --chown=node:node package.json pnpm-lock.yaml /app/
 COPY --chown=node:node --from=build /app/dist /app/dist
 COPY --chown=node:node --from=build /app/prisma /app/prisma
 COPY --chown=node:node --from=deps /app/node_modules /app/node_modules
+# Uncomment if you use something like Sentry
+COPY --chown=node:node --from=build /app/src/instrument.mjs /app/instrument.mjs
 USER node
 
 
 # ---- Production ----
 FROM source AS prod
-ENV NEW_RELIC_NO_CONFIG_FILE=true
-ENV NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true
-ENV NEW_RELIC_LOG=stdout
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 ENV PATH=/app/node_modules/.bin:$PATH
 RUN pnpm prune --prod
+#Uncomment if you use something like Sentry
+# ENV NODE_OPTIONS="--import ./instrument.mjs"
 CMD [ "pm2-runtime", "start", "dist/app.js" ]
 
 
