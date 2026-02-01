@@ -103,5 +103,6 @@ typings/
 .tern-port
 
 dist
-games.json
-games-dev.json
+src/generated
+# Sentry Config File
+.sentryclirc
