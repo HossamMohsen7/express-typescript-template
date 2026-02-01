@@ -1,5 +1,36 @@
+# Dependencies
 node_modules
+
+# Development and testing files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment files
+.env
+.env.*
+.npmrc # contains sensitive information like auth tokens
+
+# Version control
 .git
 .gitignore
-*.md
+
+# Docker-related files
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Editors and OS files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Optional: build artifacts (adjust based on your build process)
 dist
+build
+ejected
+*.ts # If you compile TypeScript to JavaScript before copying to the image
+*.map

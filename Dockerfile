@@ -1,44 +1,68 @@
-FROM node:22-slim AS base
-ENV PNPM_VERSION=9.15.4
+# ---- Base image ----
+FROM node:24-slim AS base
+ENV PNPM_VERSION=10.28.2
+
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    openssl wget bash curl python3 python3-pip build-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash \
+    && apt-get update && apt-get install -y infisical \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN apt-get update -y && apt-get install -y openssl wget bash curl python3 build-essential
-RUN curl -1sLf \
-    'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash \
-    && apt-get update && apt-get install -y infisical
-RUN corepack enable && corepack use pnpm@${PNPM_VERSION}
+RUN corepack disable \
+    && curl -fsSL https://get.pnpm.io/install.sh | PNPM_VERSION=$PNPM_VERSION PNPM_HOME=$PNPM_HOME SHELL=/bin/bash bash - \
+    && chown -R node:node $PNPM_HOME \
+    && pnpm --version
 WORKDIR /app
 RUN chown node:node /app
-RUN mkdir -p $PNPM_HOME && chown node:node $PNPM_HOME
 
+
+# ---- Dependencies ----
 FROM base AS deps
-COPY --chown=node:node package*.json pnpm-lock.yaml /app/
-RUN corepack enable && corepack use pnpm@${PNPM_VERSION}
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prefer-offline --frozen-lockfile
-ENV PATH /app/node_modules/.bin:$PATH
+USER node
+COPY --chown=node:node package.json pnpm-lock.yaml /app/
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store,uid=1000,gid=1000 pnpm install --prefer-offline --frozen-lockfile
+ENV PATH=/app/node_modules/.bin:$PATH
 
+
+# ---- Build ----
 FROM base AS build
 COPY --chown=node:node . /app
-RUN corepack enable && corepack use pnpm@${PNPM_VERSION}
 COPY --chown=node:node --from=deps /app/node_modules /app/node_modules
+USER node
 RUN pnpm run build
 
+
+# ---- Source (for prod/dev split) ----
 FROM base AS source
-COPY --chown=node:node package*.json pnpm-lock.yaml /app/
+COPY --chown=node:node package.json pnpm-lock.yaml /app/
 COPY --chown=node:node --from=build /app/dist /app/dist
 COPY --chown=node:node --from=build /app/prisma /app/prisma
-COPY --chown=node:node --from=build /app/node_modules /app/node_modules
+COPY --chown=node:node --from=deps /app/node_modules /app/node_modules
+USER node
 
+
+# ---- Production ----
 FROM source AS prod
-RUN corepack enable && corepack use pnpm@${PNPM_VERSION}
-RUN pnpm prune --prod
-RUN pnpm add -g pm2
+ENV NEW_RELIC_NO_CONFIG_FILE=true
+ENV NEW_RELIC_DISTRIBUTED_TRACING_ENABLED=true
+ENV NEW_RELIC_LOG=stdout
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
-CMD [ "pm2-runtime", "start", "dist/app.js", "-i", "max" ]
+ENV PATH=/app/node_modules/.bin:$PATH
+RUN pnpm prune --prod
+CMD [ "pm2-runtime", "start", "dist/app.js" ]
 
+
+
+# ---- Development ----
 FROM source AS dev
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH=/app/node_modules/.bin:$PATH
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
 CMD ["pnpm", "dev"]

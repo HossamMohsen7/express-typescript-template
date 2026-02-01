@@ -1,7 +1,6 @@
 services:
   app:
     init: true
-    # command: "pm2-runtime start dist/app.js -i max"
     build:
       context: .
       dockerfile: Dockerfile
